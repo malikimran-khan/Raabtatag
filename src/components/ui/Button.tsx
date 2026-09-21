@@ -15,7 +15,7 @@ import type { ReactNode } from 'react';
 
 import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
-import { Radius, Spacing } from '@/constants/theme';
+import { Radius, Shadow, Spacing, TouchTarget } from '@/constants/theme';
 import { fontForWeight } from '@/constants/fonts';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -50,11 +50,11 @@ export function Button({
 
   const sizePadding =
     size === 'sm'
-      ? { paddingVertical: 10, paddingHorizontal: Spacing.three, gap: 6 }
+      ? { minHeight: 40, paddingVertical: 10, paddingHorizontal: Spacing.three, gap: 6 }
       : size === 'lg'
-        ? { paddingVertical: 16, paddingHorizontal: Spacing.five, gap: 8 }
-        : { paddingVertical: 12, paddingHorizontal: Spacing.four, gap: 8 };
-  const fontSize = size === 'sm' ? 14 : size === 'lg' ? 18 : 16;
+        ? { minHeight: 54, paddingVertical: 15, paddingHorizontal: Spacing.five, gap: 8 }
+        : { minHeight: TouchTarget.comfortable, paddingVertical: 13, paddingHorizontal: Spacing.four, gap: 8 };
+  const fontSize = size === 'sm' ? 14 : size === 'lg' ? 17 : 15;
 
   const backgroundColor =
     variant === 'primary'
@@ -73,21 +73,9 @@ export function Button({
 
   const shadow =
     variant === 'primary'
-      ? {
-          shadowColor: theme.accent,
-          shadowOpacity: 0.35,
-          shadowRadius: 12,
-          shadowOffset: { width: 0, height: 6 },
-          elevation: 3,
-        }
+      ? Shadow.accent
       : variant === 'secondary'
-        ? {
-            shadowColor: theme.highlight,
-            shadowOpacity: 0.2,
-            shadowRadius: 12,
-            shadowOffset: { width: 0, height: 6 },
-            elevation: 3,
-          }
+        ? Shadow.ink
         : undefined;
 
   return (
@@ -99,7 +87,7 @@ export function Button({
         sizePadding,
         {
           backgroundColor,
-          opacity: disabled || isLoading ? 0.55 : 1,
+          opacity: disabled ? 0.45 : isLoading ? 0.8 : 1,
         },
         variant === 'outline' && { borderWidth: 1, borderColor: theme.border },
         shadow,
@@ -112,7 +100,7 @@ export function Button({
         <ActivityIndicator size="small" color={textColor} />
       ) : null}
       {icon && !isLoading && iconPosition === 'left' ? (
-        <Ionicons name={icon} size={fontSize} color={textColor} />
+        <Ionicons name={icon} size={fontSize + 1} color={textColor} />
       ) : null}
       {children ? (
         typeof children === 'string' ? (
@@ -131,7 +119,7 @@ export function Button({
         )
       ) : null}
       {icon && !isLoading && iconPosition === 'right' ? (
-        <Ionicons name={icon} size={fontSize} color={textColor} />
+        <Ionicons name={icon} size={fontSize + 1} color={textColor} />
       ) : null}
     </Pressable>
   );

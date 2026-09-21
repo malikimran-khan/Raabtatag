@@ -276,5 +276,10 @@
     "secure": "آمن",
     "fast": "سريع",
     "private": "خاص"
+  },
+  "form": {
+    "ownerDetails": "بيانات المالك",
+    "vehicleDetails": "بيانات المركبة",
+    "itemDetails": "بيانات الغرض"
   }
 }

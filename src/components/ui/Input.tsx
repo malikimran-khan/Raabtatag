@@ -1,6 +1,6 @@
 /**
- * Input — clone of the parking-alert web Input
- * (label + icon + error state, accent focus ring → accent border).
+ * Input — mobile text field: label + icon + error state with a constant
+ * 1.5px border (no layout jump on focus) and a 48pt comfortable height.
  */
 import {
   StyleSheet,
@@ -36,7 +36,7 @@ export function Input({
   const borderColor = error
     ? theme.danger
     : focused
-      ? theme.accent
+      ? theme.accentHover
       : theme.border;
 
   return (
@@ -52,12 +52,23 @@ export function Input({
         style={[
           styles.inputRow,
           { backgroundColor: theme.white, borderColor },
-          focused && !error && { borderWidth: 2, borderColor: theme.accent },
+          focused && !error && {
+            borderColor: theme.accentHover,
+            shadowColor: '#CBF32B',
+            shadowOpacity: 0.35,
+            shadowRadius: 8,
+            shadowOffset: { width: 0, height: 2 },
+            elevation: 2,
+          },
         ]}
       >
         {icon ? (
           <View style={styles.iconWrap}>
-            <Ionicons name={icon} size={18} color={theme.textSecondary} />
+            <Ionicons
+              name={icon}
+              size={18}
+              color={focused ? theme.accentHover : theme.textSecondary}
+            />
           </View>
         ) : null}
         <TextInput
@@ -83,20 +94,21 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
-    marginBottom: Spacing.two,
+    marginBottom: Spacing.one + 2,
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderRadius: Radius.md,
+    minHeight: 48,
   },
   iconWrap: {
     paddingLeft: Spacing.three,
   },
   input: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 13,
     paddingHorizontal: Spacing.three,
     fontSize: 15,
   },
@@ -106,3 +118,4 @@ const styles = StyleSheet.create({
 });
 
 export default Input;
+

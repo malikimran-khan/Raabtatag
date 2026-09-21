@@ -1,6 +1,7 @@
 /**
- * ItemTypeSelect — mobile clone of the web item-type <select>
- * rendered as selectable chips (keys, phone, tablet, wallet, bag, laptop, other).
+ * ItemTypeSelect — item-type selector rendered as tappable chips with
+ * icons (keys, phone, tablet, wallet, bag, laptop, other). The stored
+ * values are unchanged.
  */
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,9 +9,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
 import { useLanguage } from '@/context/LanguageContext';
-import { Radius, Spacing } from '@/constants/theme';
-
-const ITEM_TYPES = ['keys', 'phone', 'tablet', 'wallet', 'bag', 'laptop', 'other'] as const;
+import { Spacing } from '@/constants/theme';
+const ITEM_TYPES = [
+  { value: 'keys', icon: 'key-outline' },
+  { value: 'phone', icon: 'call-outline' },
+  { value: 'tablet', icon: 'tablet-portrait-outline' },
+  { value: 'wallet', icon: 'wallet-outline' },
+  { value: 'bag', icon: 'briefcase-outline' },
+  { value: 'laptop', icon: 'laptop-outline' },
+  { value: 'other', icon: 'help-circle-outline' },
+] as const;
 
 type ItemTypeSelectProps = {
   value: string;
@@ -28,24 +36,28 @@ export function ItemTypeSelect({ value, onChange }: ItemTypeSelectProps) {
         <ThemedText type="smallBold" themeColor="danger">*</ThemedText>
       </ThemedText>
       <View style={styles.chipsRow}>
-        {ITEM_TYPES.map((type) => {
+        {ITEM_TYPES.map(({ value: type, icon }) => {
           const selected = value === type;
           return (
             <Pressable
               key={type}
               onPress={() => onChange(type)}
+              accessibilityRole="button"
+              accessibilityState={{ selected }}
               style={({ pressed }) => [
                 styles.chip,
                 {
                   backgroundColor: selected ? theme.accentSoft : theme.white,
-                  borderColor: selected ? theme.accent : theme.border,
+                  borderColor: selected ? theme.accentHover : theme.border,
                 },
                 pressed && styles.pressed,
               ]}
             >
-              {selected ? (
-                <Ionicons name="checkmark" size={14} color={theme.highlight} />
-              ) : null}
+              <Ionicons
+                name={icon}
+                size={15}
+                color={selected ? theme.accentHover : theme.textSecondary}
+              />
               <ThemedText
                 type="small"
                 style={{ color: selected ? theme.highlight : theme.textSecondary }}
@@ -72,11 +84,12 @@ const styles = StyleSheet.create({
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    borderWidth: 1,
-    borderRadius: Radius.md,
+    gap: 6,
+    borderWidth: 1.5,
+    borderRadius: 999,
     paddingHorizontal: Spacing.two + 6,
     paddingVertical: 10,
+    minHeight: 40,
   },
   pressed: {
     opacity: 0.8,
@@ -84,3 +97,4 @@ const styles = StyleSheet.create({
 });
 
 export default ItemTypeSelect;
+

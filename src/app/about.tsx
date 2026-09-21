@@ -1,6 +1,6 @@
 /**
- * About — clone of the parking-alert web AboutPage:
- * hero, mission card, values grid, "What We Offer" cards, community CTA.
+ * About — mobile layout: hero intro, mission card, values list,
+ * offer cards with checklists and a community CTA.
  */
 import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,7 +14,6 @@ import { CheckItem } from '@/components/ui/CheckItem';
 import { SectionHeading, TitleWithAccent } from '@/components/ui/SectionHeading';
 import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
-import { useIsCompactScreen } from '@/hooks/use-breakpoint';
 import { useLanguage } from '@/context/LanguageContext';
 import { Radius, Spacing } from '@/constants/theme';
 
@@ -24,7 +23,6 @@ export default function AboutScreen() {
   const router = useRouter();
   const theme = useTheme();
   const { t } = useLanguage();
-  const isCompact = useIsCompactScreen();
 
   const values: Array<{ icon: IconName; titleKey: string; descKey: string }> = [
     { icon: 'shield-checkmark-outline', titleKey: 'features.privacy.title', descKey: 'features.privacy.description' },
@@ -37,13 +35,13 @@ export default function AboutScreen() {
     <Screen showBack withFooter title="About">
       <View style={styles.hero}>
         <TitleWithAccent text="About RAABTA TAG" type="h2" style={styles.left} />
-        <ThemedText type="body" themeColor="textSecondary" style={styles.center}>
+        <ThemedText type="body" themeColor="textSecondary">
           {t('about.missionIntro')}
         </ThemedText>
       </View>
 
       <Card style={styles.missionCard}>
-        <ThemedText type="h2">{t('about.missionTitle')}</ThemedText>
+        <ThemedText type="h3">{t('about.missionTitle')}</ThemedText>
         <ThemedText type="body" themeColor="textSecondary">
           {t('about.missionText1')}
         </ThemedText>
@@ -55,22 +53,18 @@ export default function AboutScreen() {
         </ThemedText>
       </Card>
 
-      <SectionHeading title={t('about.valuesTitle')} />
+      <SectionHeading title={t('about.valuesTitle')} align="left" />
 
-      <View style={styles.grid}>
+      <View style={styles.valueStack}>
         {values.map(({ icon, titleKey, descKey }) => (
           <View
             key={titleKey}
-            style={[
-              styles.valueCard,
-              isCompact ? styles.valueCardCompact : null,
-              { borderColor: 'rgba(18, 18, 18, 0.06)', backgroundColor: 'rgba(255, 255, 255, 0.8)' },
-            ]}
+            style={[styles.valueCard, { borderColor: theme.border, backgroundColor: theme.white }]}
           >
-            <View style={[styles.iconTile, { backgroundColor: 'rgba(203, 243, 43, 0.1)' }]}>
-              <Ionicons name={icon} size={20} color={theme.accent} />
+            <View style={[styles.iconTile, { backgroundColor: theme.accentSoft }]}>
+              <Ionicons name={icon} size={20} color={theme.accentHover} />
             </View>
-            <View style={isCompact ? styles.valueTextWrap : null}>
+            <View style={styles.valueTextWrap}>
               <ThemedText type="cardTitle">{t(titleKey)}</ThemedText>
               <ThemedText type="body" themeColor="textSecondary" style={styles.valueText}>
                 {t(descKey)}
@@ -80,12 +74,12 @@ export default function AboutScreen() {
         ))}
       </View>
 
-      <SectionHeading title={t('about.offerTitle')} />
+      <SectionHeading title={t('about.offerTitle')} align="left" />
 
       <View style={styles.offerStack}>
-        <View style={[styles.offerCard, { backgroundColor: 'rgba(203, 243, 43, 0.05)' }]}>
-          <View style={[styles.iconTile, { backgroundColor: 'rgba(203, 243, 43, 0.1)' }]}>
-            <Ionicons name="qr-code-outline" size={22} color={theme.accent} />
+        <View style={[styles.offerCard, { backgroundColor: theme.surface }]}>
+          <View style={[styles.iconTile, { backgroundColor: theme.accentSoft }]}>
+            <Ionicons name="qr-code-outline" size={22} color={theme.accentHover} />
           </View>
           <ThemedText type="h3">{t('about.offerVehicleTitle')}</ThemedText>
           <ThemedText type="body" themeColor="textSecondary">
@@ -98,9 +92,9 @@ export default function AboutScreen() {
           </View>
         </View>
 
-        <View style={[styles.offerCard, { backgroundColor: 'rgba(18, 18, 18, 0.03)' }]}>
-          <View style={[styles.iconTile, { backgroundColor: 'rgba(203, 243, 43, 0.1)' }]}>
-            <Ionicons name="pricetag-outline" size={22} color={theme.accent} />
+        <View style={[styles.offerCard, { backgroundColor: theme.surface }]}>
+          <View style={[styles.iconTile, { backgroundColor: theme.accentSoft }]}>
+            <Ionicons name="pricetag-outline" size={22} color={theme.accentHover} />
           </View>
           <ThemedText type="h3">{t('about.offerItemTitle')}</ThemedText>
           <ThemedText type="body" themeColor="textSecondary">
@@ -114,18 +108,18 @@ export default function AboutScreen() {
         </View>
       </View>
 
-      <View style={[styles.ctaCard, { backgroundColor: 'rgba(203, 243, 43, 0.08)' }]}>
-        <ThemedText type="h2" style={styles.center}>
+      <View style={[styles.ctaCard, { backgroundColor: theme.accentSoft }]}>
+        <ThemedText type="h3" style={styles.center}>
           {t('about.communityTitle')}
         </ThemedText>
         <ThemedText type="body" themeColor="textSecondary" style={styles.center}>
           {t('about.communityText')}
         </ThemedText>
         <View style={styles.ctaRow}>
-          <Button variant="primary" onPress={() => router.push('/create')}>
+          <Button fullWidth onPress={() => router.push('/create')}>
             {t('nav.registerVehicle')}
           </Button>
-          <Button variant="outline" onPress={() => router.push('/register-item')}>
+          <Button variant="outline" fullWidth onPress={() => router.push('/register-item')}>
             {t('nav.registerItem')}
           </Button>
         </View>
@@ -140,38 +134,23 @@ const styles = StyleSheet.create({
   },
   hero: {
     gap: Spacing.two,
-    marginBottom: Spacing.three,
   },
   left: {
     textAlign: 'left',
   },
   missionCard: {
     gap: Spacing.three,
-    marginBottom: Spacing.three,
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.two + 2,
-    marginBottom: Spacing.three,
+  valueStack: {
+    gap: Spacing.two,
   },
   valueCard: {
-    width: '47%',
-    flexGrow: 1,
-    minWidth: 150,
-    borderWidth: 1,
-    borderRadius: Radius.xl,
-    padding: Spacing.three,
-    gap: Spacing.two + 2,
-  },
-  // Phone: single-column horizontal rows.
-  valueCardCompact: {
-    width: '100%',
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two + 2,
-    padding: Spacing.two + 4,
+    alignItems: 'flex-start',
+    gap: Spacing.three,
+    borderWidth: 1,
     borderRadius: Radius.lg,
+    padding: Spacing.three,
   },
   valueTextWrap: {
     flex: 1,
@@ -190,12 +169,9 @@ const styles = StyleSheet.create({
   },
   offerStack: {
     gap: Spacing.three,
-    marginBottom: Spacing.three,
   },
   offerCard: {
-    borderRadius: Radius.xl,
-    borderWidth: 1,
-    borderColor: 'rgba(18, 18, 18, 0.06)',
+    borderRadius: Radius.lg,
     padding: Spacing.three,
     gap: Spacing.two + 2,
   },
@@ -205,14 +181,14 @@ const styles = StyleSheet.create({
   },
   ctaCard: {
     borderRadius: Radius.xl,
-    borderWidth: 1,
-    borderColor: 'rgba(18, 18, 18, 0.06)',
     padding: Spacing.four,
     alignItems: 'center',
-    gap: Spacing.three,
+    gap: Spacing.two + 2,
   },
   ctaRow: {
     alignSelf: 'stretch',
-    gap: Spacing.two + 2,
+    gap: Spacing.two,
+    marginTop: Spacing.one,
   },
 });
+

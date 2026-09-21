@@ -1,11 +1,14 @@
 /**
- * FAQ — clone of the parking-alert web FAQPage (8 Q&A cards + contact CTA).
+ * FAQ — expandable Q&A accordion (native disclosure pattern) +
+ * contact CTA.
  */
 import { StyleSheet, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 import { Screen } from '@/components/ui/Screen';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { Accordion } from '@/components/ui/Accordion';
 import { Button } from '@/components/ui/Button';
 import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
@@ -31,29 +34,26 @@ export default function FaqScreen() {
       />
 
       <View style={styles.stack}>
-        {faqs.map((faq) => (
-          <View
-            key={faq.question}
-            style={[
-              styles.card,
-              { borderColor: 'rgba(18, 18, 18, 0.06)', backgroundColor: 'rgba(255, 255, 255, 0.85)' },
-            ]}
-          >
-            <ThemedText type="h3" style={styles.question}>
-              {faq.question}
-            </ThemedText>
+        {faqs.map((faq, index) => (
+          <Accordion key={faq.question} title={faq.question} defaultOpen={index === 0}>
             <ThemedText type="body" themeColor="textSecondary">
               {faq.answer}
             </ThemedText>
-          </View>
+          </Accordion>
         ))}
       </View>
 
-      <View style={[styles.ctaCard, { backgroundColor: 'rgba(203, 243, 43, 0.08)' }]}>
-        <ThemedText type="h2" style={styles.center}>
+      <View style={[styles.ctaCard, { backgroundColor: theme.accentSoft }]}>
+        <View style={[styles.ctaIcon, { backgroundColor: 'rgba(255, 255, 255, 0.7)' }]}>
+          <Ionicons name="chatbubbles-outline" size={22} color={theme.accentHover} />
+        </View>
+        <ThemedText type="h3" style={styles.center}>
           Still have questions?
         </ThemedText>
-        <Button variant="primary" onPress={() => router.push('/contact')}>
+        <ThemedText type="body" themeColor="textSecondary" style={styles.center}>
+          Our team is happy to help you get started with RAABTA TAG.
+        </ThemedText>
+        <Button fullWidth icon="mail-outline" onPress={() => router.push('/contact')}>
           {t('nav.contact')}
         </Button>
       </View>
@@ -66,21 +66,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   stack: {
-    gap: Spacing.three,
+    gap: Spacing.two,
   },
-  card: {
-    borderWidth: 1,
-    borderRadius: Radius.xl,
-    padding: Spacing.three,
-    gap: Spacing.two + 2,
-  },
-  question: {},
   ctaCard: {
     borderRadius: Radius.xl,
-    borderWidth: 1,
-    borderColor: 'rgba(18, 18, 18, 0.06)',
     padding: Spacing.four,
     alignItems: 'center',
-    gap: Spacing.three,
+    gap: Spacing.two + 2,
+  },
+  ctaIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.one,
   },
 });
+

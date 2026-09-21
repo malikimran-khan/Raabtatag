@@ -117,3 +117,48 @@ export const Radius = {
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 760;
 
+/**
+ * Mobile shadow recipes (iOS shadow* + Android elevation).
+ * Use these instead of re-declaring per-component shadows.
+ */
+export const Shadow = {
+  /** Subtle lift for list cards / tiles. */
+  card: {
+    shadowColor: '#121212',
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 2,
+  },
+  /** Stronger lift for modals / sheets / hero cards. */
+  cardStrong: {
+    shadowColor: '#121212',
+    shadowOpacity: 0.12,
+    shadowRadius: 28,
+    shadowOffset: { width: 0, height: 14 },
+    elevation: 6,
+  },
+  /** Accent-tinted glow used by primary buttons. */
+  accent: {
+    shadowColor: '#CBF32B',
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
+  },
+  /** Ink shadow used by secondary (dark) buttons. */
+  ink: {
+    shadowColor: '#121212',
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
+  },
+} as const;
+
+/** Minimum comfortable touch target (Apple HIG / Material). */
+export const TouchTarget = {
+  min: 44,
+  comfortable: 48,
+} as const;
+

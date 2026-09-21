@@ -1,6 +1,6 @@
 /**
- * PageHeader — compact, left-aligned mobile page intro
- * (small icon tile in accent tint, title with optional accent last word, subtitle).
+ * PageHeader — left-aligned mobile page intro:
+ * icon tile in accent tint + title (optional accent last word) + subtitle.
  */
 import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,7 +13,7 @@ import { Radius, Spacing } from '@/constants/theme';
 type PageHeaderProps = {
   icon: keyof typeof Ionicons.glyphMap;
   title: string;
-  /** Renders the last word in the accent color (web gradient-text pattern). */
+  /** Renders the last word in the accent color. */
   accentLastWord?: boolean;
   subtitle?: string;
   subtitleRTL?: boolean;
@@ -31,7 +31,7 @@ export function PageHeader({
   return (
     <View style={styles.container}>
       <View style={styles.titleRow}>
-        <View style={[styles.iconTile, { backgroundColor: 'rgba(203, 243, 43, 0.12)' }]}>
+        <View style={[styles.iconTile, { backgroundColor: theme.accentSoft }]}>
           <Ionicons name={icon} size={22} color={theme.accentHover} />
         </View>
         <View style={styles.titleStack}>
@@ -59,7 +59,7 @@ export function PageHeader({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: Spacing.two,
+    marginBottom: Spacing.one,
   },
   titleRow: {
     flexDirection: 'row',
@@ -83,3 +83,4 @@ const styles = StyleSheet.create({
 });
 
 export default PageHeader;
+

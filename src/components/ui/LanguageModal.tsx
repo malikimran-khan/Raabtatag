@@ -1,51 +1,71 @@
 /**
- * LanguageModal + LanguageSwitcher — clone of the parking-alert web
- * LanguageModal (shown on first launch when no language is stored)
- * and the navbar LanguageSwitcher.
+ * LanguageModal + LanguageSwitcher — mobile-native language controls.
+ * - LanguageModal: first-launch gate (shown when no language is stored),
+ *   rendered as a centered mobile dialog with large tappable options.
+ * - LanguageSwitcher: header icon that opens a bottom sheet with the
+ *   language choices (replaces the web dropdown menu).
+ * The trigger logic and storage behavior are unchanged.
  */
-import {
-  Modal,
-  Pressable,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { BottomSheet } from '@/components/ui/BottomSheet';
 import { useTheme } from '@/hooks/use-theme';
 import { useLanguage, type Language } from '@/context/LanguageContext';
 import { Radius, Spacing } from '@/constants/theme';
 
-function LanguageOption({
-  flag,
-  title,
-  subtitle,
-  onPress,
-}: {
+const LANGUAGE_OPTIONS: Array<{
+  value: Language;
   flag: string;
   title: string;
   subtitle: string;
+  label: string;
+}> = [
+  { value: 'en', flag: '🇺🇸', title: 'English', subtitle: 'Continue in English', label: 'English' },
+  { value: 'ar', flag: '🇸🇦', title: 'العربية', subtitle: 'المتابعة باللغة العربية', label: 'العربية' },
+];
+
+function LanguageOptionCard({
+  option,
+  selected = false,
+  onPress,
+}: {
+  option: (typeof LANGUAGE_OPTIONS)[number];
+  selected?: boolean;
   onPress: () => void;
 }) {
   const theme = useTheme();
+
   return (
     <Pressable
       onPress={onPress}
+      accessibilityRole="button"
       style={({ pressed }) => [
         styles.option,
-        { borderColor: 'rgba(18, 18, 18, 0.15)', backgroundColor: 'rgba(247, 248, 242, 0.4)' },
-        pressed && { borderColor: theme.accent, backgroundColor: theme.accentSoft, transform: [{ scale: 0.98 }] },
+        {
+          backgroundColor: selected ? theme.accentSoft : 'rgba(247, 248, 242, 0.6)',
+          borderColor: selected ? theme.accentHover : theme.border,
+        },
+        pressed && styles.pressed,
       ]}
     >
       <View style={styles.optionFlag}>
-        <ThemedText style={{ fontSize: 26 }}>{flag}</ThemedText>
+        <ThemedText style={{ fontSize: 22 }}>{option.flag}</ThemedText>
       </View>
-      <ThemedText type="cardTitle">{title}</ThemedText>
-      <ThemedText type="caption" themeColor="textSecondary" style={styles.optionSubtitle}>
-        {subtitle}
-      </ThemedText>
+      <View style={styles.optionText}>
+        <ThemedText type="cardTitle">{option.title}</ThemedText>
+        <ThemedText type="caption" themeColor="textSecondary">
+          {option.subtitle}
+        </ThemedText>
+      </View>
+      <Ionicons
+        name={selected ? 'checkmark-circle' : 'chevron-forward'}
+        size={selected ? 20 : 16}
+        color={selected ? theme.accentHover : theme.textSecondary}
+      />
     </Pressable>
   );
 }
@@ -53,21 +73,22 @@ function LanguageOption({
 /** First-launch language gate — same trigger logic as the web MainLayout. */
 export function LanguageModal() {
   const { setLanguage } = useLanguage();
-  const theme = useTheme();
 
   const select = (language: Language) => {
     setLanguage(language);
   };
 
   return (
-    <View style={[styles.overlay, { backgroundColor: 'rgba(0, 0, 0, 0.6)' }]}>
+    <View style={styles.overlay}>
       <ThemedView style={styles.card}>
-        <ThemedText style={styles.globe}>🌐</ThemedText>
+        <View style={styles.globeTile}>
+          <Ionicons name="globe-outline" size={28} color="#B7DE19" />
+        </View>
 
         <ThemedText type="h2" style={styles.center}>
           Select Language
         </ThemedText>
-        <ThemedText type="h3" style={[styles.center, { color: theme.accentHover }]} writingDirection="rtl">
+        <ThemedText type="h3" style={[styles.center, { color: '#B7DE19' }]} writingDirection="rtl">
           اختر اللغة
         </ThemedText>
 
@@ -83,97 +104,75 @@ export function LanguageModal() {
           يرجى اختيار لغتك المفضلة لتخصيص تجربتك.
         </ThemedText>
 
-        <View style={styles.optionsRow}>
-          <LanguageOption
-            flag="🇺🇸"
-            title="English"
-            subtitle="Continue in English"
-            onPress={() => select('en')}
-          />
-          <LanguageOption
-            flag="🇸🇦"
-            title="العربية"
-            subtitle="المتابعة باللغة العربية"
-            onPress={() => select('ar')}
-          />
+        <View style={styles.optionsStack}>
+          {LANGUAGE_OPTIONS.map((option) => (
+            <LanguageOptionCard
+              key={option.value}
+              option={option}
+              onPress={() => select(option.value)}
+            />
+          ))}
         </View>
 
         <ThemedText type="caption" themeColor="textSecondary" style={styles.center}>
           You can change this later from the language menu in the header.
-        </ThemedText>
-        <ThemedText
-          type="caption"
-          themeColor="textSecondary"
-          style={styles.center}
-          writingDirection="rtl"
-        >
-          يمكنك تغيير هذا لاحقاً من قائمة اللغة في الأعلى.
         </ThemedText>
       </ThemedView>
     </View>
   );
 }
 
-/** Globe button for the header — opens a compact switcher modal. */
+/** Header language button that opens the bottom-sheet picker. */
 export function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
   const theme = useTheme();
   const [visible, setVisible] = useState(false);
 
-  const options: Array<{ value: Language; label: string }> = [
-    { value: 'en', label: 'English' },
-    { value: 'ar', label: 'العربية' },
-  ];
-
   return (
     <>
       <Pressable
         onPress={() => setVisible(true)}
-        hitSlop={8}
-        style={({ pressed }) => [
-          styles.switcherButton,
-          { backgroundColor: theme.surface },
-          pressed && styles.pressed,
-        ]}
+        accessibilityRole="button"
+        accessibilityLabel="Change language"
+        style={({ pressed }) => [styles.switcherButton, pressed && styles.pressed]}
       >
-        <Ionicons name="globe-outline" size={20} color={theme.text} />
+        <Ionicons name="language-outline" size={22} color={theme.text} />
       </Pressable>
 
-      <Modal
-        animationType="fade"
-        transparent
-        visible={visible}
-        onRequestClose={() => setVisible(false)}
-      >
-        <Pressable style={styles.switcherOverlay} onPress={() => setVisible(false)}>
-          <ThemedView
-            style={styles.switcherCard}
-            onStartShouldSetResponder={() => true}
-          >
-            {options.map((option) => (
+      <BottomSheet visible={visible} onClose={() => setVisible(false)} title="Language">
+        <View style={styles.sheetOptions}>
+          {LANGUAGE_OPTIONS.map((option) => {
+            const selected = language === option.value;
+            return (
               <Pressable
                 key={option.value}
                 onPress={() => {
                   setLanguage(option.value);
                   setVisible(false);
                 }}
+                accessibilityRole="button"
                 style={({ pressed }) => [
-                  styles.switcherOption,
+                  styles.sheetOption,
+                  selected && { backgroundColor: theme.accentSoft },
                   pressed && styles.pressed,
                 ]}
               >
-                <ThemedText type="cardTitle">{option.label}</ThemedText>
-                {language === option.value ? (
-                  <Ionicons name="checkmark" size={18} color={theme.text} />
+                <ThemedText style={{ fontSize: 20 }}>{option.flag}</ThemedText>
+                <ThemedText type="cardTitle" style={styles.sheetOptionLabel}>
+                  {option.label}
+                </ThemedText>
+                {selected ? (
+                  <Ionicons name="checkmark" size={18} color={theme.accentHover} />
                 ) : null}
               </Pressable>
-            ))}
-          </ThemedView>
-        </Pressable>
-      </Modal>
+            );
+          })}
+        </View>
+      </BottomSheet>
     </>
   );
 }
+
 
 const styles = StyleSheet.create({
   overlay: {
@@ -187,14 +186,13 @@ const styles = StyleSheet.create({
     padding: Spacing.three,
     zIndex: 100,
     elevation: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
   card: {
     width: '100%',
     maxWidth: 420,
     borderRadius: Radius.xl,
-    backgroundColor: 'rgba(255, 255, 255, 0.97)',
-    borderWidth: 1,
-    borderColor: 'rgba(18, 18, 18, 0.06)',
+    backgroundColor: 'rgba(255, 255, 255, 0.98)',
     padding: Spacing.four,
     alignItems: 'center',
     gap: Spacing.two,
@@ -204,80 +202,71 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 16 },
     elevation: 12,
   },
-  globe: {
-    fontSize: 40,
+  globeTile: {
+    width: 56,
+    height: 56,
+    borderRadius: Radius.lg,
+    backgroundColor: 'rgba(203, 243, 43, 0.16)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.one,
   },
   center: {
     textAlign: 'center',
   },
-  optionsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.three,
-    marginTop: Spacing.three,
+  optionsStack: {
     alignSelf: 'stretch',
-    justifyContent: 'center',
+    gap: Spacing.two,
+    marginTop: Spacing.three,
   },
   option: {
-    flexGrow: 1,
-    flexBasis: '45%',
-    minWidth: 140,
-    borderRadius: Radius.lg,
-    borderWidth: 2,
-    paddingVertical: Spacing.three,
-    paddingHorizontal: Spacing.two,
-    alignItems: 'center',
-    gap: 4,
-  },
-  optionFlag: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 4,
-  },
-  optionSubtitle: {
-    textAlign: 'center',
-  },
-  switcherButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  switcherOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
-    alignItems: 'flex-end',
-    justifyContent: 'flex-start',
-    padding: Spacing.three,
-  },
-  switcherCard: {
-    width: 200,
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: 'rgba(18, 18, 18, 0.08)',
-    backgroundColor: '#FFFFFF',
-    padding: Spacing.two,
-    gap: 2,
-    shadowColor: '#121212',
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 8,
-  },
-  switcherOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: Radius.sm,
-    paddingHorizontal: Spacing.three,
+    gap: Spacing.three,
+    borderRadius: Radius.lg,
+    borderWidth: 1.5,
     paddingVertical: Spacing.two + 2,
+    paddingHorizontal: Spacing.three,
+    minHeight: 68,
+  },
+  optionFlag: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  optionText: {
+    flex: 1,
+    gap: 2,
   },
   pressed: {
-    opacity: 0.7,
+    opacity: 0.8,
+  },
+  switcherButton: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sheetOptions: {
+    gap: Spacing.two,
+    marginBottom: Spacing.two,
+  },
+  sheetOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: 'rgba(18, 18, 18, 0.06)',
+    paddingHorizontal: Spacing.three,
+    paddingVertical: 14,
+    minHeight: 52,
+  },
+  sheetOptionLabel: {
+    flex: 1,
   },
 });

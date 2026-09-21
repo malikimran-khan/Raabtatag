@@ -1,5 +1,6 @@
 /**
- * Features — clone of the web FeaturesSection (6 feature cards, 2-col grid).
+ * Features — single-column feature rows on phones (icon left, text right),
+ * 2-col grid on tablets.
  */
 import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,7 +9,7 @@ import type { ComponentProps } from 'react';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
-import { useIsCompactScreen } from '@/hooks/use-breakpoint';
+import { useIsTabletUp } from '@/hooks/use-breakpoint';
 import { useLanguage } from '@/context/LanguageContext';
 import { Radius, Spacing } from '@/constants/theme';
 
@@ -26,7 +27,7 @@ const FEATURES: Array<{ icon: IconName; key: string }> = [
 export function Features() {
   const theme = useTheme();
   const { t } = useLanguage();
-  const isCompact = useIsCompactScreen();
+  const isTablet = useIsTabletUp();
 
   return (
     <View style={styles.section}>
@@ -39,15 +40,14 @@ export function Features() {
           <View
             key={key}
             style={[
-              styles.card,
-              isCompact ? styles.cardCompact : null,
-              { borderColor: 'rgba(18, 18, 18, 0.06)', backgroundColor: 'rgba(255, 255, 255, 0.8)' },
+              isTablet ? styles.cardGrid : styles.cardRow,
+              { borderColor: theme.border, backgroundColor: theme.white },
             ]}
           >
-            <View style={[styles.iconTile, { backgroundColor: 'rgba(203, 243, 43, 0.1)' }]}>
-              <Ionicons name={icon} size={22} color={theme.accent} />
+            <View style={[styles.iconTile, { backgroundColor: theme.accentSoft }]}>
+              <Ionicons name={icon} size={21} color={theme.accentHover} />
             </View>
-            <View style={isCompact ? styles.textContent : null}>
+            <View style={isTablet ? styles.textContent : styles.textContent}>
               <ThemedText type="cardTitle" style={styles.title}>
                 {t(`features.${key}.title`)}
               </ThemedText>
@@ -69,25 +69,27 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: Spacing.two + 2,
+    gap: Spacing.two,
   },
-  card: {
-    width: '47%',
-    flexGrow: 1,
-    minWidth: 150,
-    borderWidth: 1,
-    borderRadius: Radius.xl,
-    padding: Spacing.three,
-  },
-  // Phone: single-column horizontal rows (icon left, text right) —
-  // touch friendly, no squeezed 2-col grid.
-  cardCompact: {
+  // Phone: single-column horizontal rows — comfortable touch targets.
+  cardRow: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.two + 2,
+    gap: Spacing.three,
     padding: Spacing.two + 4,
     borderRadius: Radius.lg,
+    borderWidth: 1,
+  },
+  // Tablet: 2-col tiles.
+  cardGrid: {
+    width: '48.5%',
+    flexGrow: 1,
+    flexDirection: 'column',
+    gap: Spacing.two + 2,
+    padding: Spacing.three,
+    borderRadius: Radius.xl,
+    borderWidth: 1,
   },
   iconTile: {
     width: 44,
@@ -101,12 +103,14 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   title: {
-    marginBottom: Spacing.one + 2,
+    fontSize: 15,
+    lineHeight: 21,
   },
   description: {
     fontSize: 13,
-    lineHeight: 20,
+    lineHeight: 19,
   },
 });
 
 export default Features;
+

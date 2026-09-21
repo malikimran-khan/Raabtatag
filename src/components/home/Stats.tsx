@@ -1,13 +1,15 @@
 /**
- * Stats — clone of the web StatsSection (4 stat cards, 2-col grid on mobile).
+ * Stats — compact 2×2 stat tiles (tonal, mobile dashboard style).
  */
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
+import { useTheme } from '@/hooks/use-theme';
 import { useLanguage } from '@/context/LanguageContext';
 import { Radius, Spacing } from '@/constants/theme';
 
 export function Stats() {
+  const theme = useTheme();
   const { t } = useLanguage();
 
   const stats = [
@@ -20,11 +22,17 @@ export function Stats() {
   return (
     <View style={styles.grid}>
       {stats.map((stat) => (
-        <View key={stat.label} style={styles.card}>
-          <ThemedText type="h1" style={styles.value}>
+        <View
+          key={stat.label}
+          style={[
+            styles.card,
+            { backgroundColor: theme.surface },
+          ]}
+        >
+          <ThemedText type="h2" style={styles.value}>
             {stat.value}
           </ThemedText>
-          <ThemedText type="small" themeColor="textSecondary" style={styles.label}>
+          <ThemedText type="caption" themeColor="textSecondary" style={styles.label}>
             {stat.label}
           </ThemedText>
         </View>
@@ -37,25 +45,23 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: Spacing.two + 2,
+    gap: Spacing.two,
     justifyContent: 'center',
   },
   card: {
-    width: '47%',
+    width: '48.5%',
     flexGrow: 1,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(18, 18, 18, 0.06)',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: Radius.xl,
-    paddingVertical: Spacing.two + 4,
+    borderRadius: Radius.lg,
+    paddingVertical: Spacing.three,
     paddingHorizontal: Spacing.two,
     gap: 2,
   },
   value: {
-    fontSize: 22,
-    lineHeight: 30,
+    fontSize: 21,
+    lineHeight: 28,
     textAlign: 'center',
+    color: '#B7DE19',
   },
   label: {
     fontSize: 11,
@@ -65,3 +71,4 @@ const styles = StyleSheet.create({
 });
 
 export default Stats;
+

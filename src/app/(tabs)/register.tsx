@@ -1,7 +1,6 @@
 /**
- * Register — app-style hub tab giving one-tap access to the two
- * registration flows. Routes are unchanged: /create (vehicle) and
- * /register-item (personal item).
+ * Register — hub tab giving one-tap access to the two registration
+ * flows. Routes are unchanged: /create (vehicle) and /register-item.
  */
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -59,11 +58,11 @@ export default function RegisterScreen() {
             accessibilityRole="button"
             style={({ pressed }) => [
               styles.optionCard,
-              { borderColor: 'rgba(18, 18, 18, 0.08)', backgroundColor: 'rgba(255, 255, 255, 0.92)' },
-              pressed && { borderColor: 'rgba(203, 243, 43, 0.5)', transform: [{ scale: 0.98 }] },
+              { borderColor: theme.border, backgroundColor: theme.white },
+              pressed && styles.pressedCard,
             ]}
           >
-            <View style={styles.iconTile}>
+            <View style={[styles.iconTile, { backgroundColor: theme.accentSoft }]}>
               <Ionicons name={option.icon} size={26} color={theme.accentHover} />
             </View>
             <View style={styles.optionText}>
@@ -72,8 +71,8 @@ export default function RegisterScreen() {
                 {option.description}
               </ThemedText>
             </View>
-            <View style={[styles.chevronTile, { backgroundColor: theme.accentSoft }]}>
-              <Ionicons name="chevron-forward" size={18} color={theme.highlight} />
+            <View style={[styles.chevronTile, { backgroundColor: theme.surface }]}>
+              <Ionicons name="chevron-forward" size={18} color={theme.text} />
             </View>
           </Pressable>
         ))}
@@ -83,7 +82,7 @@ export default function RegisterScreen() {
         onPress={() => router.push('/how-it-works' as never)}
         style={({ pressed }) => [
           styles.howRow,
-          { backgroundColor: 'rgba(203, 243, 43, 0.1)' },
+          { backgroundColor: theme.accentSoft },
           pressed && styles.pressed,
         ]}
       >
@@ -114,7 +113,7 @@ const styles = StyleSheet.create({
   optionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.two + 2,
+    gap: Spacing.two + 4,
     borderWidth: 1,
     borderRadius: Radius.xl,
     padding: Spacing.three,
@@ -124,11 +123,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     elevation: 2,
   },
+  pressedCard: {
+    borderColor: 'rgba(203, 243, 43, 0.5)',
+    transform: [{ scale: 0.98 }],
+  },
   iconTile: {
     width: 54,
     height: 54,
     borderRadius: Radius.lg,
-    backgroundColor: 'rgba(203, 243, 43, 0.14)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -150,6 +152,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two + 4,
+    minHeight: 48,
   },
   howText: {
     flex: 1,
@@ -161,3 +164,4 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
 });
+
