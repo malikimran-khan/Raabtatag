@@ -286,5 +286,10 @@
     "secure": "Secure",
     "fast": "Fast",
     "private": "Private"
+  },
+  "form": {
+    "ownerDetails": "Owner Details",
+    "vehicleDetails": "Vehicle Details",
+    "itemDetails": "Item Details"
   }
 }

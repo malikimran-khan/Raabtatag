@@ -1,7 +1,6 @@
 /**
- * User Detail — clone of the parking-alert web UserDetailPage:
- * fetches a user doc by id, shows the QR code image and details,
- * with QR share (mobile equivalent of the web "Download QR").
+ * User Detail — fetches a user doc by id, shows the QR code image and
+ * details, with QR share (mobile equivalent of the web "Download QR").
  */
 import { useEffect, useState } from 'react';
 import { Image, Platform, StyleSheet, View } from 'react-native';
@@ -10,6 +9,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { ErrorState } from '@/components/ui/StateViews';
 import { DetailRow } from '@/components/ui/InfoRow';
 import { CardSkeleton } from '@/components/ui/Skeleton';
 import { ThemedText } from '@/components/themed-text';
@@ -91,7 +92,7 @@ export default function UserDetailScreen() {
 
   if (loading) {
     return (
-      <Screen showBack>
+      <Screen showBack title="User Profile">
         <CardSkeleton />
       </Screen>
     );
@@ -99,18 +100,14 @@ export default function UserDetailScreen() {
 
   if (error || !user) {
     return (
-      <Screen showBack>
-        <Card style={styles.errorCard}>
-          <ThemedText type="h2" style={styles.center}>
-            User Not Found
-          </ThemedText>
-          <ThemedText type="body" themeColor="textSecondary" style={styles.center}>
-            {error}
-          </ThemedText>
-          <Button variant="primary" icon="arrow-back" onPress={() => router.replace('/')}>
-            Go Home
-          </Button>
-        </Card>
+      <Screen showBack title="User Profile">
+        <ErrorState
+          icon="person-outline"
+          title="User Not Found"
+          message={error}
+          actionLabel="Go Home"
+          onAction={() => router.replace('/')}
+        />
       </Screen>
     );
   }
@@ -129,44 +126,41 @@ export default function UserDetailScreen() {
 
   return (
     <Screen showBack title="User Profile">
-      {user.qrCode && Platform.OS !== 'web' ? (
-        <View style={styles.shareRow}>
-          <Button variant="outline" icon="download-outline" size="sm" onPress={handleShareQR}>
-            Share QR
-          </Button>
-        </View>
+      <Badge icon="checkmark-circle-outline" label="Verified User" tone="ink" />
+
+      {user.qrCode ? (
+        <Card glow="blue" style={styles.qrCard}>
+          <View style={styles.qrTile}>
+            {user.qrCode.startsWith('data:') ? (
+              <Image
+                source={{ uri: user.qrCode }}
+                style={styles.qrImage}
+                resizeMode="contain"
+              />
+            ) : (
+              <ThemedText style={styles.qrFallback}>QR</ThemedText>
+            )}
+          </View>
+          <ThemedText type="cardTitle" style={styles.center}>
+            {user.name}
+          </ThemedText>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.center}>
+            Registered user in RAABTA TAG system
+          </ThemedText>
+          {Platform.OS !== 'web' ? (
+            <Button
+              variant="outline"
+              icon="download-outline"
+              size="sm"
+              onPress={handleShareQR}
+            >
+              Share QR
+            </Button>
+          ) : null}
+        </Card>
       ) : null}
 
-      <View style={styles.verifiedWrap}>
-        <View style={[styles.verifiedBadge, { backgroundColor: 'rgba(18, 18, 18, 0.06)' }]}>
-          <View style={[styles.verifiedDot, { backgroundColor: theme.highlight }]} />
-          <ThemedText type="small">Verified User</ThemedText>
-        </View>
-      </View>
-
-      <Card glow="blue" style={styles.mainCard}>
-        <View style={styles.headerRow}>
-          {user.qrCode ? (
-            <View style={styles.qrTile}>
-              {user.qrCode.startsWith('data:') ? (
-                <Image
-                  source={{ uri: user.qrCode }}
-                  style={styles.qrImage}
-                  resizeMode="contain"
-                />
-              ) : (
-                <ThemedText style={styles.qrFallback}>QR</ThemedText>
-              )}
-            </View>
-          ) : null}
-          <View style={styles.headerText}>
-            <ThemedText type="h2">{user.name}</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Registered user in RAABTA TAG system
-            </ThemedText>
-          </View>
-        </View>
-
+      <Card style={styles.detailsCard}>
         <View style={styles.rows}>
           {details.map((detail) => (
             <DetailRow
@@ -194,67 +188,38 @@ const styles = StyleSheet.create({
   center: {
     textAlign: 'center',
   },
-  errorCard: {
+  qrCard: {
     alignItems: 'center',
-    gap: Spacing.three,
-    marginTop: Spacing.four,
-  },
-  shareRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  verifiedWrap: {
-    alignItems: 'center',
-  },
-  verifiedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-    borderRadius: 999,
-    paddingHorizontal: Spacing.three,
-    paddingVertical: 8,
-  },
-  verifiedDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  mainCard: {
-    gap: Spacing.three,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.three,
+    gap: Spacing.two + 2,
   },
   qrTile: {
     backgroundColor: '#FFFFFF',
-    borderRadius: Radius.md,
-    padding: Spacing.two,
+    borderRadius: Radius.lg,
+    padding: Spacing.two + 4,
     borderWidth: 1,
     borderColor: 'rgba(18, 18, 18, 0.06)',
   },
   qrFallback: {
-    width: 88,
-    height: 88,
+    width: 128,
+    height: 128,
     textAlign: 'center',
-    lineHeight: 88,
-    fontSize: 22,
+    lineHeight: 128,
+    fontSize: 26,
     fontWeight: 700,
     color: '#121212',
   },
   qrImage: {
-    width: 96,
-    height: 96,
+    width: 152,
+    height: 152,
   },
-  headerText: {
-    flex: 1,
-    gap: 4,
+  detailsCard: {
+    gap: Spacing.three,
   },
   rows: {
-    gap: Spacing.three,
+    gap: Spacing.two,
   },
   poweredBy: {
     textAlign: 'center',
   },
 });
+

@@ -1,6 +1,6 @@
 /**
- * InfoRow — clone of the parking-alert web InfoRow components:
- * - DetailRow: icon tile + label/value (vehicle/item/user detail pages)
+ * InfoRow — mobile info rows:
+ * - DetailRow: icon tile + label/value (detail screens, grouped look)
  * - SummaryRow: label left / value right (form success screens)
  */
 import { StyleSheet, View } from 'react-native';
@@ -25,8 +25,8 @@ export function DetailRow({ icon, label, value }: DetailRowProps) {
         { backgroundColor: theme.surface },
       ]}
     >
-      <View style={[styles.detailIcon, { backgroundColor: 'rgba(203, 243, 43, 0.2)' }]}>
-        <Ionicons name={icon} size={18} color={theme.highlight} />
+      <View style={[styles.detailIcon, { backgroundColor: theme.accentSoft }]}>
+        <Ionicons name={icon} size={17} color={theme.accentHover} />
       </View>
       <View style={styles.detailContent}>
         <ThemedText type="caption" themeColor="textSecondary" style={styles.detailLabel}>
@@ -65,11 +65,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.three,
     borderRadius: Radius.md,
-    padding: 14,
+    padding: 12,
+    minHeight: 60,
   },
   detailIcon: {
-    width: 42,
-    height: 42,
+    width: 40,
+    height: 40,
     borderRadius: Radius.md,
     alignItems: 'center',
     justifyContent: 'center',
@@ -82,17 +83,20 @@ const styles = StyleSheet.create({
   detailLabel: {
     textTransform: 'uppercase',
     letterSpacing: 0.8,
+    fontSize: 11,
+    lineHeight: 15,
   },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: Spacing.three,
-    borderRadius: Radius.lg,
-    padding: 16,
+    borderRadius: Radius.md,
+    padding: 14,
   },
   summaryValue: {
     textAlign: 'right',
     flexShrink: 1,
   },
 });
+

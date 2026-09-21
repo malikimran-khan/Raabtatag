@@ -1,12 +1,13 @@
 /**
- * Resources — clone of the web ResourcesSection (guide cards with CTA links).
+ * Resources — guide entry cards (mobile rows with icon, title,
+ * description and a chevron action).
  */
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import type { ComponentProps } from 'react';
 
-import { SectionHeading, TitleWithAccent } from '@/components/ui/SectionHeading';
+import { SectionHeading } from '@/components/ui/SectionHeading';
 import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
 import { Radius, Spacing } from '@/constants/theme';
@@ -48,34 +49,32 @@ export function Resources() {
         title="Learn More About RAABTA TAG"
         subtitle="Explore our detailed guides to get the most out of your RAABTA TAG experience."
       />
-      <View style={styles.grid}>
+      <View style={styles.stack}>
         {resources.map((resource) => (
           <Pressable
             key={resource.link}
             onPress={() => router.push(resource.link as never)}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.card,
-              { borderColor: 'rgba(18, 18, 18, 0.06)', backgroundColor: 'rgba(255, 255, 255, 0.8)' },
-              pressed && { borderColor: 'rgba(203, 243, 43, 0.4)', transform: [{ translateY: -2 }] },
+              { borderColor: theme.border, backgroundColor: theme.white },
+              pressed && styles.pressed,
             ]}
           >
-            <View style={[styles.iconTile, { backgroundColor: 'rgba(203, 243, 43, 0.1)' }]}>
-              <Ionicons name={resource.icon} size={22} color={theme.accent} />
+            <View style={[styles.iconTile, { backgroundColor: theme.accentSoft }]}>
+              <Ionicons name={resource.icon} size={21} color={theme.accentHover} />
             </View>
-            <ThemedText type="cardTitle" style={styles.title}>
-              {resource.title}
-            </ThemedText>
-            <ThemedText type="body" themeColor="textSecondary" style={styles.description}>
-              {resource.description}
-            </ThemedText>
-            <View style={styles.cta}>
-              <ThemedText
-                type="smallBold"
-                style={{ color: theme.accentHover }}
-              >
-                {resource.cta}
+            <View style={styles.textStack}>
+              <ThemedText type="cardTitle">{resource.title}</ThemedText>
+              <ThemedText type="body" themeColor="textSecondary" style={styles.description}>
+                {resource.description}
               </ThemedText>
-              <Ionicons name="arrow-forward" size={14} color={theme.accentHover} />
+              <View style={styles.cta}>
+                <ThemedText type="smallBold" style={{ color: theme.accentHover }}>
+                  {resource.cta}
+                </ThemedText>
+                <Ionicons name="arrow-forward" size={14} color={theme.accentHover} />
+              </View>
             </View>
           </Pressable>
         ))}
@@ -89,14 +88,15 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.three,
     gap: Spacing.three,
   },
-  grid: {
+  stack: {
     gap: Spacing.three,
   },
   card: {
+    flexDirection: 'row',
+    gap: Spacing.three,
     borderWidth: 1,
-    borderRadius: Radius.xl,
+    borderRadius: Radius.lg,
     padding: Spacing.three,
-    gap: Spacing.two + 2,
   },
   iconTile: {
     width: 44,
@@ -105,7 +105,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {},
+  textStack: {
+    flex: 1,
+    gap: Spacing.one,
+  },
   description: {
     fontSize: 13,
     lineHeight: 20,
@@ -116,6 +119,11 @@ const styles = StyleSheet.create({
     gap: 6,
     marginTop: Spacing.one,
   },
+  pressed: {
+    opacity: 0.85,
+    transform: [{ scale: 0.99 }],
+  },
 });
 
 export default Resources;
+

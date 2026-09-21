@@ -1,5 +1,5 @@
 /**
- * Cta — clone of the web CtaSection (gradient card with dual register CTAs).
+ * Cta — final gradient call-to-action card (dual register CTAs).
  */
 import { StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,7 +17,7 @@ export function Cta() {
   return (
     <View style={styles.section}>
       <LinearGradient
-        colors={['rgba(203, 243, 43, 0.10)', '#FFFFFF', 'rgba(18, 18, 18, 0.06)']}
+        colors={['rgba(203, 243, 43, 0.12)', '#FFFFFF', 'rgba(18, 18, 18, 0.04)']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.card}
@@ -33,6 +33,7 @@ export function Cta() {
             variant="primary"
             icon="arrow-forward"
             iconPosition="right"
+            fullWidth
             onPress={() => router.push('/create')}
           >
             {t('cta.registerVehicle')}
@@ -41,6 +42,7 @@ export function Cta() {
             variant="secondary"
             icon="arrow-forward"
             iconPosition="right"
+            fullWidth
             onPress={() => router.push('/register-item')}
           >
             {t('cta.registerItem')}
@@ -62,7 +64,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.xl,
     borderWidth: 1,
     borderColor: 'rgba(18, 18, 18, 0.06)',
-    padding: Spacing.three,
+    padding: Spacing.four,
     alignItems: 'center',
     gap: Spacing.two + 4,
   },
@@ -78,7 +80,8 @@ const styles = StyleSheet.create({
   },
   ctaRow: {
     alignSelf: 'stretch',
-    gap: Spacing.two + 2,
+    gap: Spacing.two,
+    marginTop: Spacing.one,
   },
   footerText: {
     textAlign: 'center',
@@ -86,3 +89,4 @@ const styles = StyleSheet.create({
 });
 
 export default Cta;
+

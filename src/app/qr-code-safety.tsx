@@ -1,5 +1,6 @@
 /**
- * QR Code Safety — clone of the parking-alert web QRCodeSafetyPage.
+ * QR Code Safety — mobile guide layout: page header, dynamic QR card,
+ * privacy feature rows, numbered best practices, commitment card, CTA.
  */
 import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,10 +12,9 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { CheckItem } from '@/components/ui/CheckItem';
-import { SectionHeading, TitleWithAccent } from '@/components/ui/SectionHeading';
+import { SectionHeading } from '@/components/ui/SectionHeading';
 import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
-import { useIsCompactScreen } from '@/hooks/use-breakpoint';
 import { QR_CODE_SAFETY } from '@/content/guides';
 import { Radius, Spacing } from '@/constants/theme';
 
@@ -23,7 +23,6 @@ type IconName = ComponentProps<typeof Ionicons>['name'];
 export default function QrCodeSafetyScreen() {
   const router = useRouter();
   const theme = useTheme();
-  const isCompact = useIsCompactScreen();
   const { dynamicPoints, features, bestPractices } = QR_CODE_SAFETY;
 
   return (
@@ -37,10 +36,10 @@ export default function QrCodeSafetyScreen() {
 
       <Card style={styles.infoCard}>
         <View style={styles.infoHeader}>
-          <View style={[styles.infoIcon, { backgroundColor: 'rgba(203, 243, 43, 0.2)' }]}>
-            <Ionicons name="qr-code-outline" size={18} color={theme.highlight} />
+          <View style={[styles.infoIcon, { backgroundColor: theme.accentSoft }]}>
+            <Ionicons name="qr-code-outline" size={18} color={theme.accentHover} />
           </View>
-          <ThemedText type="h2">Dynamic QR Code Technology</ThemedText>
+          <ThemedText type="h3">Dynamic QR Code Technology</ThemedText>
         </View>
         <ThemedText type="body" themeColor="textSecondary">
           Unlike static QR codes that permanently display fixed information, RAABTA TAG uses
@@ -55,22 +54,18 @@ export default function QrCodeSafetyScreen() {
         </View>
       </Card>
 
-      <SectionHeading title="Privacy Features" emphasizeLast />
+      <SectionHeading title="Privacy Features" align="left" />
 
-      <View style={styles.featuresGrid}>
+      <View style={styles.featureStack}>
         {features.map((feature) => (
           <View
             key={feature.title}
-            style={[
-              styles.featureCard,
-              isCompact ? styles.featureCardCompact : null,
-              { borderColor: 'rgba(18, 18, 18, 0.06)', backgroundColor: 'rgba(255, 255, 255, 0.8)' },
-            ]}
+            style={[styles.featureCard, { borderColor: theme.border, backgroundColor: theme.white }]}
           >
-            <View style={[styles.featureIcon, { backgroundColor: 'rgba(203, 243, 43, 0.1)' }]}>
-              <Ionicons name={feature.icon as IconName} size={18} color={theme.accent} />
+            <View style={[styles.featureIcon, { backgroundColor: theme.accentSoft }]}>
+              <Ionicons name={feature.icon as IconName} size={18} color={theme.accentHover} />
             </View>
-            <View style={isCompact ? styles.featureTextWrap : null}>
+            <View style={styles.featureTextWrap}>
               <ThemedText type="cardTitle">{feature.title}</ThemedText>
               <ThemedText type="body" themeColor="textSecondary" style={styles.featureText}>
                 {feature.text}
@@ -80,29 +75,31 @@ export default function QrCodeSafetyScreen() {
         ))}
       </View>
 
-      <SectionHeading title="Safety Best Practices" emphasizeLast />
+      <SectionHeading title="Safety Best Practices" align="left" />
 
       <View style={styles.practicesStack}>
         {bestPractices.map((practice, index) => (
           <View
             key={practice.title}
-            style={[
-              styles.practiceCard,
-              { borderColor: 'rgba(18, 18, 18, 0.06)', backgroundColor: 'rgba(255, 255, 255, 0.6)' },
-            ]}
+            style={[styles.practiceCard, { borderColor: theme.border, backgroundColor: theme.white }]}
           >
-            <ThemedText type="cardTitle">
-              {String(index + 1)}. {practice.title}
-            </ThemedText>
-            <ThemedText type="body" themeColor="textSecondary">
-              {practice.text}
-            </ThemedText>
+            <View style={[styles.practiceBadge, { backgroundColor: theme.accentSoft }]}>
+              <ThemedText type="smallBold" style={{ color: theme.accentHover }}>
+                {String(index + 1).padStart(2, '0')}
+              </ThemedText>
+            </View>
+            <View style={styles.practiceTextWrap}>
+              <ThemedText type="cardTitle">{practice.title}</ThemedText>
+              <ThemedText type="body" themeColor="textSecondary" style={styles.featureText}>
+                {practice.text}
+              </ThemedText>
+            </View>
           </View>
         ))}
       </View>
 
       <Card style={styles.infoCard}>
-        <TitleWithAccent text="Our Commitment to Your Safety" type="h2" />
+        <ThemedText type="h3">Our Commitment to Your Safety</ThemedText>
         <ThemedText type="body" themeColor="textSecondary">
           At RAABTA TAG, we believe that privacy is not a feature — it's a right. Every decision
           we make about our platform is guided by our commitment to protecting your personal
@@ -119,18 +116,18 @@ export default function QrCodeSafetyScreen() {
         </ThemedText>
       </Card>
 
-      <View style={[styles.ctaCard, { backgroundColor: 'rgba(203, 243, 43, 0.08)' }]}>
-        <ThemedText type="h2" style={styles.center}>
+      <View style={[styles.ctaCard, { backgroundColor: theme.accentSoft }]}>
+        <ThemedText type="h3" style={styles.center}>
           Stay Safe with RAABTA TAG
         </ThemedText>
         <ThemedText type="body" themeColor="textSecondary" style={styles.center}>
           Start using privacy-first QR codes for your vehicle and personal items today.
         </ThemedText>
         <View style={styles.ctaRow}>
-          <Button variant="primary" onPress={() => router.push('/create')}>
+          <Button fullWidth onPress={() => router.push('/create')}>
             Register Your Vehicle
           </Button>
-          <Button variant="outline" onPress={() => router.push('/register-item')}>
+          <Button variant="outline" fullWidth onPress={() => router.push('/register-item')}>
             Register Personal Item
           </Button>
         </View>
@@ -161,32 +158,16 @@ const styles = StyleSheet.create({
   points: {
     gap: Spacing.two + 4,
   },
-  featuresGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.three,
+  featureStack: {
+    gap: Spacing.two,
   },
   featureCard: {
-    width: '47%',
-    flexGrow: 1,
-    minWidth: 150,
-    borderWidth: 1,
-    borderRadius: Radius.xl,
-    padding: Spacing.three,
-    gap: Spacing.two + 2,
-  },
-  // Phone: single-column horizontal rows.
-  featureCardCompact: {
-    width: '100%',
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two + 2,
-    padding: Spacing.two + 4,
+    alignItems: 'flex-start',
+    gap: Spacing.three,
+    borderWidth: 1,
     borderRadius: Radius.lg,
-  },
-  featureTextWrap: {
-    flex: 1,
-    gap: Spacing.one,
+    padding: Spacing.three,
   },
   featureIcon: {
     width: 40,
@@ -195,29 +176,46 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  featureTextWrap: {
+    flex: 1,
+    gap: Spacing.one,
+  },
   featureText: {
     fontSize: 13,
     lineHeight: 20,
   },
   practicesStack: {
-    gap: Spacing.three,
+    gap: Spacing.two,
   },
   practiceCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.three,
     borderWidth: 1,
-    borderRadius: Radius.md,
+    borderRadius: Radius.lg,
     padding: Spacing.three,
-    gap: Spacing.two,
+  },
+  practiceBadge: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  practiceTextWrap: {
+    flex: 1,
+    gap: Spacing.one,
   },
   ctaCard: {
     borderRadius: Radius.xl,
-    borderWidth: 1,
-    borderColor: 'rgba(18, 18, 18, 0.06)',
     padding: Spacing.four,
     alignItems: 'center',
-    gap: Spacing.three,
+    gap: Spacing.two + 2,
   },
   ctaRow: {
     alignSelf: 'stretch',
-    gap: Spacing.two + 2,
+    gap: Spacing.two,
+    marginTop: Spacing.one,
   },
 });
+

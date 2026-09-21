@@ -1,7 +1,6 @@
 /**
- * More — app-style settings/information hub (the "Profile"-style tab):
- * grouped list rows for Learn, Support, Legal plus socials and a
- * compact brand footer. Mirrors the web navbar/footer navigation.
+ * More — settings/information hub tab: grouped list rows for Learn,
+ * Support, Legal plus socials and a compact brand footer.
  */
 import { Linking, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,12 +9,13 @@ import type { ComponentProps } from 'react';
 
 import { Screen } from '@/components/ui/Screen';
 import { Footer } from '@/components/ui/Footer';
+import { ListGroup, ListRow } from '@/components/ui/ListGroup';
 import { TitleWithAccent } from '@/components/ui/SectionHeading';
 import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
 import { useLanguage } from '@/context/LanguageContext';
 import { BRAND } from '@/constants/brand';
-import { Radius, Spacing } from '@/constants/theme';
+import { Spacing } from '@/constants/theme';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -66,32 +66,16 @@ export default function MoreScreen() {
   };
 
   const renderGroup = (title: string, items: LinkItem[]) => (
-    <View style={styles.group}>
-      <ThemedText type="caption" themeColor="textSecondary" style={styles.groupTitle}>
-        {title.toUpperCase()}
-      </ThemedText>
-      <View style={[styles.list, { borderColor: 'rgba(18, 18, 18, 0.06)' }]}>
-        {items.map((link, index) => (
-          <Pressable
-            key={link.href + link.label}
-            onPress={() => openLink(link.href)}
-            style={({ pressed }) => [
-              styles.row,
-              index < items.length - 1 ? styles.rowDivider : null,
-              pressed && styles.pressed,
-            ]}
-          >
-            <View style={[styles.iconTile, { backgroundColor: 'rgba(203, 243, 43, 0.12)' }]}>
-              <Ionicons name={link.icon} size={18} color={theme.accentHover} />
-            </View>
-            <ThemedText type="cardTitle" style={styles.rowLabel} numberOfLines={1}>
-              {link.label}
-            </ThemedText>
-            <Ionicons name="chevron-forward" size={18} color={theme.textSecondary} />
-          </Pressable>
-        ))}
-      </View>
-    </View>
+    <ListGroup label={title}>
+      {items.map((link) => (
+        <ListRow
+          key={link.href + link.label}
+          icon={link.icon}
+          label={link.label}
+          onPress={() => openLink(link.href)}
+        />
+      ))}
+    </ListGroup>
   );
 
   return (
@@ -119,7 +103,7 @@ export default function MoreScreen() {
               accessibilityLabel={label}
               style={({ pressed }) => [
                 styles.socialButton,
-                { backgroundColor: 'rgba(203, 243, 43, 0.14)' },
+                { backgroundColor: theme.accentSoft },
                 pressed && styles.pressed,
               ]}
             >
@@ -142,44 +126,12 @@ const styles = StyleSheet.create({
   left: {
     textAlign: 'left',
   },
-  group: {
+  socialGroup: {
     gap: Spacing.two,
   },
   groupTitle: {
     paddingHorizontal: Spacing.one,
     letterSpacing: 0.8,
-  },
-  list: {
-    borderWidth: 1,
-    borderRadius: Radius.lg,
-    backgroundColor: 'rgba(255, 255, 255, 0.92)',
-    overflow: 'hidden',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two + 2,
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.two + 6,
-  },
-  rowDivider: {
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(18, 18, 18, 0.05)',
-  },
-  iconTile: {
-    width: 36,
-    height: 36,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rowLabel: {
-    flex: 1,
-    fontSize: 15,
-    lineHeight: 21,
-  },
-  socialGroup: {
-    gap: Spacing.two,
   },
   socialRow: {
     flexDirection: 'row',

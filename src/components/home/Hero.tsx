@@ -1,9 +1,9 @@
 /**
- * Hero — clone of the parking-alert web HeroSection:
- * status badge with pulsing dot, big headline with accent words,
- * subtitle, 3 CTAs, trust indicators.
+ * Hero — mobile dashboard intro card: status badge with pulsing dot,
+ * bold headline with accent words, subtitle, the two primary register
+ * CTAs, a "how it works" tertiary link and trust checks.
  */
-import { Animated, StyleSheet, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef } from 'react';
@@ -44,16 +44,16 @@ export function Hero() {
   ];
 
   return (
-    <View style={[styles.hero, { borderColor: 'rgba(18, 18, 18, 0.06)' }]}>
+    <View style={styles.hero}>
       <LinearGradient
-        colors={['rgba(203, 243, 43, 0.18)', 'rgba(255,255,255,0)']}
+        colors={['rgba(203, 243, 43, 0.2)', 'rgba(255,255,255,0)']}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        end={{ x: 0.9, y: 1 }}
         style={StyleSheet.absoluteFill}
       />
 
       <View style={styles.content}>
-        <View style={[styles.badge, { backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: 'rgba(203, 243, 43, 0.2)' }]}>
+        <View style={styles.badge}>
           <PulsingDot />
           <ThemedText type="caption" themeColor="textSecondary" style={styles.badgeText}>
             {t('hero.badge')}
@@ -61,12 +61,11 @@ export function Hero() {
         </View>
 
         <ThemedText type="hero" style={styles.headline}>
-          {t('hero.headlinePart1')}
-          {'\n'}
-          {t('hero.headlinePart2')}{' '}
+          {t('hero.headlinePart1')}{' '}
           <ThemedText type="hero" style={{ color: theme.accentHover }}>
-            {t('hero.headlinePart3')}
+            {t('hero.headlinePart2')}
           </ThemedText>{' '}
+          {t('hero.headlinePart3')}{' '}
           <ThemedText type="hero" style={{ color: theme.accent }}>
             {t('hero.headlinePart4')}
           </ThemedText>
@@ -76,10 +75,10 @@ export function Hero() {
           {t('hero.subtitle')}
         </ThemedText>
 
-        <View style={styles.ctaRow}>
+        <View style={styles.ctaStack}>
           <Button
             variant="primary"
-            icon="person-add-outline"
+            icon="car-outline"
             fullWidth
             onPress={() => router.push('/create')}
           >
@@ -93,23 +92,27 @@ export function Hero() {
           >
             {t('hero.registerItem')}
           </Button>
-          <Button
-            variant="outline"
-            icon="qr-code-outline"
-            fullWidth
-            onPress={() => router.push('/how-it-works')}
-          >
-            {t('hero.learnMore')}
-          </Button>
         </View>
+
+        <Pressable
+          onPress={() => router.push('/how-it-works')}
+          accessibilityRole="link"
+          style={({ pressed }) => [styles.learnRow, pressed && styles.pressed]}
+        >
+          <Ionicons name="qr-code-outline" size={18} color={theme.accentHover} />
+          <ThemedText type="smallBold" style={styles.learnText}>
+            {t('hero.learnMore')}
+          </ThemedText>
+          <Ionicons name="arrow-forward" size={16} color={theme.accentHover} />
+        </Pressable>
 
         <View style={styles.trustRow}>
           {trust.map((label, index) => (
             <View key={label} style={styles.trustItem}>
               {index > 0 ? <View style={[styles.divider, { backgroundColor: theme.border }]} /> : null}
               <View style={styles.trustLabel}>
-                <Ionicons name="checkmark-circle" size={14} color={theme.accent} />
-                <ThemedText type="caption" themeColor="textSecondary" style={styles.trustText}>
+                <Ionicons name="checkmark-circle" size={14} color={theme.accentHover} />
+                <ThemedText type="caption" themeColor="textSecondary">
                   {label}
                 </ThemedText>
               </View>
@@ -125,25 +128,27 @@ const styles = StyleSheet.create({
   hero: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
+    borderColor: 'rgba(18, 18, 18, 0.07)',
     borderRadius: Radius.xl,
     overflow: 'hidden',
     shadowColor: '#121212',
-    shadowOpacity: 0.06,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 12 },
-    elevation: 3,
+    shadowOpacity: 0.05,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 2,
   },
   content: {
-    paddingVertical: Spacing.four,
-    paddingHorizontal: Spacing.three,
-    alignItems: 'center',
+    padding: Spacing.three + Spacing.two,
     gap: Spacing.three,
   },
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'flex-start',
     gap: Spacing.two,
     borderWidth: 1,
+    borderColor: 'rgba(203, 243, 43, 0.3)',
+    backgroundColor: 'rgba(203, 243, 43, 0.08)',
     borderRadius: 999,
     paddingHorizontal: Spacing.three,
     paddingVertical: 6,
@@ -159,19 +164,28 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   headline: {
-    textAlign: 'center',
-    fontSize: 30,
-    lineHeight: 38,
+    fontSize: 28,
+    lineHeight: 36,
   },
   subtitle: {
-    textAlign: 'center',
     fontSize: 14,
     lineHeight: 22,
   },
-  ctaRow: {
-    alignSelf: 'stretch',
-    gap: Spacing.two + 2,
+  ctaStack: {
+    gap: Spacing.two,
     marginTop: Spacing.one,
+  },
+  learnRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.two,
+    paddingVertical: Spacing.two,
+    borderRadius: Radius.md,
+    backgroundColor: 'rgba(18, 18, 18, 0.03)',
+  },
+  learnText: {
+    color: '#B7DE19',
   },
   trustRow: {
     flexDirection: 'row',
@@ -179,7 +193,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexWrap: 'wrap',
     gap: Spacing.two,
-    marginTop: Spacing.three,
+    marginTop: Spacing.one,
   },
   trustItem: {
     flexDirection: 'row',
@@ -195,9 +209,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
   },
-  trustText: {
-    fontWeight: 600,
+  pressed: {
+    opacity: 0.7,
   },
 });
 
 export default Hero;
+

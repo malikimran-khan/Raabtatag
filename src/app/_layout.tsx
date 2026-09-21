@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 
 import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
 import { LanguageModal } from '@/components/ui/LanguageModal';
+import { AppDrawerProvider } from '@/components/navigation/AppDrawer';
 import { useInterFonts } from '@/constants/fonts';
 
 SplashScreen.preventAutoHideAsync();
@@ -25,15 +26,17 @@ function RootStack() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <StatusBar style="dark" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: '#FFFFFF' },
-        }}
-      />
-      {/* First-launch language modal — same behavior as the web MainLayout */}
-      {hasStoredLanguage === false ? <LanguageModal /> : null}
+      <AppDrawerProvider>
+        <StatusBar style="dark" />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: '#FFFFFF' },
+          }}
+        />
+        {/* First-launch language modal — same behavior as the web MainLayout */}
+        {hasStoredLanguage === false ? <LanguageModal /> : null}
+      </AppDrawerProvider>
     </ThemeProvider>
   );
 }

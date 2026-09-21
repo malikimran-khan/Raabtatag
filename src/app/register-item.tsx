@@ -11,6 +11,7 @@ import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { ItemTypeSelect } from '@/components/ui/ItemTypeSelect';
 import { StatusBanner } from '@/components/ui/StatusBanner';
 import { SummaryRow } from '@/components/ui/InfoRow';
@@ -111,28 +112,20 @@ export default function RegisterItemScreen() {
 
   return (
     <Screen showBack title={t('personalItemForm.title')}>
-      <View style={styles.header}>
-        <ThemedText type="h2" style={{ color: theme.accentHover, textAlign: 'left' }}>
-          {t('personalItemForm.title')}
-        </ThemedText>
-        <ThemedText type="body" themeColor="textSecondary" style={styles.headerSubtitle}>
-          {t('personalItemForm.subtitle')}
-        </ThemedText>
-      </View>
-
       {successMessage ? (
         <Card glow="green" style={styles.successCard}>
-          <View style={[styles.successPill, { backgroundColor: 'rgba(18, 18, 18, 0.06)' }]}>
-            <Ionicons name="checkmark-circle-outline" size={16} color={theme.highlight} />
-            <ThemedText type="smallBold">{t('personalItemForm.successTitle')}</ThemedText>
+          <View style={[styles.successIcon, { backgroundColor: theme.accentSoft }]}>
+            <Ionicons name="checkmark-circle" size={30} color={theme.accentHover} />
           </View>
 
-          <ThemedText type="h3" style={styles.successPending}>
-            {t('personalItemForm.successPending')}
-          </ThemedText>
-          <ThemedText type="body" themeColor="textSecondary" style={styles.centerText}>
-            {t('personalItemForm.successText')}
-          </ThemedText>
+          <View style={styles.successHeader}>
+            <ThemedText type="h3" style={styles.centerText}>
+              {t('personalItemForm.successPending')}
+            </ThemedText>
+            <ThemedText type="body" themeColor="textSecondary" style={styles.centerText}>
+              {t('personalItemForm.successText')}
+            </ThemedText>
+          </View>
 
           <View style={styles.summaryStack}>
             <SummaryRow label={t('personalItemForm.requestId')} value={successMessage.id} />
@@ -147,90 +140,104 @@ export default function RegisterItemScreen() {
           </Button>
         </Card>
       ) : (
-        <Card glow="blue" style={styles.formCard}>
-          <View style={styles.formStack}>
-            <Input
-              label={t('personalItemForm.ownerName')}
-              placeholder={t('personalItemForm.ownerPlaceholder')}
-              value={formData.ownerName}
-              onChangeText={handleChange('ownerName')}
-              icon="person-outline"
-            />
-            <Input
-              label={t('personalItemForm.phoneNumber')}
-              placeholder={t('personalItemForm.phonePlaceholder')}
-              value={formData.phoneNumber}
-              onChangeText={handleChange('phoneNumber')}
-              icon="phone-portrait-outline"
-              keyboardType="phone-pad"
-            />
-            <ItemTypeSelect
-              value={formData.itemType}
-              onChange={(value) => handleChange('itemType')(value)}
-            />
+        <View style={styles.formWrap}>
+          <PageHeader
+            icon="pricetag-outline"
+            title={t('personalItemForm.title')}
+            subtitle={t('personalItemForm.subtitle')}
+          />
 
-            <View style={styles.descriptionWrap}>
-              <ThemedText type="smallBold">
-                {t('personalItemForm.descriptionLabel')}
+          <Card glow="blue" style={styles.formCard}>
+            <View style={styles.formStack}>
+              <ThemedText type="caption" themeColor="textSecondary" style={styles.sectionLabel}>
+                {t('form.ownerDetails').toUpperCase()}
               </ThemedText>
+
               <Input
-                placeholder={t('personalItemForm.descriptionPlaceholder')}
-                value={formData.itemDescription}
-                onChangeText={handleChange('itemDescription')}
-                multiline
-                maxLength={200}
-                style={styles.textArea}
+                label={t('personalItemForm.ownerName')}
+                placeholder={t('personalItemForm.ownerPlaceholder')}
+                value={formData.ownerName}
+                onChangeText={handleChange('ownerName')}
+                icon="person-outline"
               />
-              <ThemedText type="caption" themeColor="textSecondary">
-                {t('personalItemForm.characters', {
-                  count: formData.itemDescription.length,
-                })}
+              <Input
+                label={t('personalItemForm.phoneNumber')}
+                placeholder={t('personalItemForm.phonePlaceholder')}
+                value={formData.phoneNumber}
+                onChangeText={handleChange('phoneNumber')}
+                icon="phone-portrait-outline"
+                keyboardType="phone-pad"
+              />
+
+              <View style={[styles.sectionDivider, { backgroundColor: theme.border }]} />
+
+              <ThemedText type="caption" themeColor="textSecondary" style={styles.sectionLabel}>
+                {t('form.itemDetails').toUpperCase()}
               </ThemedText>
+
+              <ItemTypeSelect
+                value={formData.itemType}
+                onChange={(value) => handleChange('itemType')(value)}
+              />
+
+              <View style={styles.descriptionWrap}>
+                <ThemedText type="smallBold">
+                  {t('personalItemForm.descriptionLabel')}
+                </ThemedText>
+                <Input
+                  placeholder={t('personalItemForm.descriptionPlaceholder')}
+                  value={formData.itemDescription}
+                  onChangeText={handleChange('itemDescription')}
+                  multiline
+                  maxLength={200}
+                  style={styles.textArea}
+                />
+                <ThemedText type="caption" themeColor="textSecondary" style={styles.counter}>
+                  {t('personalItemForm.characters', {
+                    count: formData.itemDescription.length,
+                  })}
+                </ThemedText>
+              </View>
+
+              {error ? <StatusBanner type="error" message={error} /> : null}
+
+              <Button fullWidth isLoading={loading} onPress={handleSubmit}>
+                {t('personalItemForm.submit')}
+              </Button>
             </View>
-
-            {error ? <StatusBanner type="error" message={error} /> : null}
-
-            <Button fullWidth isLoading={loading} onPress={handleSubmit}>
-              {t('personalItemForm.submit')}
-            </Button>
-          </View>
-        </Card>
+          </Card>
+        </View>
       )}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    alignItems: 'center',
-    gap: Spacing.two,
-    marginBottom: Spacing.two,
-  },
-  headerSubtitle: {
-    textAlign: 'center',
-  },
   successCard: {
     alignItems: 'center',
     gap: Spacing.three,
+    marginTop: Spacing.four,
   },
-  successPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
+  successIcon: {
+    width: 64,
+    height: 64,
     borderRadius: 999,
-    paddingHorizontal: Spacing.three,
-    paddingVertical: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  successPending: {
-    textAlign: 'center',
+  successHeader: {
+    gap: Spacing.two,
   },
   centerText: {
     textAlign: 'center',
   },
   summaryStack: {
     alignSelf: 'stretch',
-    gap: Spacing.two + 4,
+    gap: Spacing.two,
     marginBottom: Spacing.two,
+  },
+  formWrap: {
+    gap: Spacing.three,
   },
   formCard: {
     padding: Spacing.three,
@@ -238,8 +245,20 @@ const styles = StyleSheet.create({
   formStack: {
     gap: Spacing.three,
   },
+  sectionLabel: {
+    letterSpacing: 0.8,
+    marginBottom: -Spacing.one,
+  },
+  sectionDivider: {
+    height: StyleSheet.hairlineWidth,
+    alignSelf: 'stretch',
+  },
   descriptionWrap: {
     gap: Spacing.two,
+  },
+  counter: {
+    alignSelf: 'flex-end',
+    marginTop: -Spacing.one,
   },
   textArea: {
     height: 90,
@@ -247,3 +266,4 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
 });
+

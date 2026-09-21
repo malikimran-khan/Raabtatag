@@ -11,6 +11,7 @@ import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { StatusBanner } from '@/components/ui/StatusBanner';
 import { SummaryRow } from '@/components/ui/InfoRow';
 import { ThemedText } from '@/components/themed-text';
@@ -26,7 +27,7 @@ import {
   normalizeVehicleNumber,
   validateVehicleNumber,
 } from '@/utils/vehicle';
-import { Radius, Spacing } from '@/constants/theme';
+import { Spacing } from '@/constants/theme';
 
 const initialFormState = {
   ownerName: '',
@@ -155,28 +156,20 @@ export default function CreateScreen() {
 
   return (
     <Screen showBack title={t('createVehicle.title')}>
-      <View style={styles.header}>
-        <ThemedText type="h2" style={{ color: theme.accentHover, textAlign: 'left' }}>
-          {t('createVehicle.title')}
-        </ThemedText>
-        <ThemedText type="body" themeColor="textSecondary" style={styles.headerSubtitle}>
-          {t('createVehicle.subtitle')}
-        </ThemedText>
-      </View>
-
       {successMessage ? (
         <Card glow="green" style={styles.successCard}>
-          <View style={[styles.successPill, { backgroundColor: 'rgba(18, 18, 18, 0.06)' }]}>
-            <Ionicons name="checkmark-circle-outline" size={16} color={theme.highlight} />
-            <ThemedText type="smallBold">{t('createVehicle.successTitle')}</ThemedText>
+          <View style={[styles.successIcon, { backgroundColor: theme.accentSoft }]}>
+            <Ionicons name="checkmark-circle" size={30} color={theme.accentHover} />
           </View>
 
-          <ThemedText type="h3" style={styles.successPending}>
-            {t('createVehicle.successPending')}
-          </ThemedText>
-          <ThemedText type="body" themeColor="textSecondary" style={styles.centerText}>
-            {t('createVehicle.successText')}
-          </ThemedText>
+          <View style={styles.successHeader}>
+            <ThemedText type="h3" style={styles.centerText}>
+              {t('createVehicle.successPending')}
+            </ThemedText>
+            <ThemedText type="body" themeColor="textSecondary" style={styles.centerText}>
+              {t('createVehicle.successText')}
+            </ThemedText>
+          </View>
 
           <View style={styles.summaryStack}>
             <SummaryRow label={t('createVehicle.requestId')} value={successMessage.id} />
@@ -190,106 +183,120 @@ export default function CreateScreen() {
           </Button>
         </Card>
       ) : (
-        <Card glow="blue" style={styles.formCard}>
-          <View style={styles.formStack}>
-            <Input
-              label={t('createVehicle.ownerName')}
-              placeholder={t('createVehicle.ownerPlaceholder')}
-              value={formData.ownerName}
-              onChangeText={handleChange('ownerName')}
-              icon="person-outline"
-            />
-            <Input
-              label={t('createVehicle.email')}
-              placeholder={t('createVehicle.emailPlaceholder')}
-              value={formData.email}
-              onChangeText={handleChange('email')}
-              icon="mail-outline"
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            <Input
-              label={t('createVehicle.contactNumber')}
-              placeholder={t('createVehicle.contactPlaceholder')}
-              value={formData.contactNumber}
-              onChangeText={handleChange('contactNumber')}
-              icon="phone-portrait-outline"
-              keyboardType="phone-pad"
-            />
-            <Input
-              label={t('createVehicle.address')}
-              placeholder={t('createVehicle.addressPlaceholder')}
-              value={formData.address}
-              onChangeText={handleChange('address')}
-              icon="location-outline"
-            />
-            <Input
-              label={t('createVehicle.vehicleName')}
-              placeholder={t('createVehicle.vehicleNamePlaceholder')}
-              value={formData.vehicleName}
-              onChangeText={handleChange('vehicleName')}
-              icon="car-outline"
-            />
-            <Input
-              label={t('createVehicle.vehicleNumber')}
-              placeholder={t('createVehicle.vehicleNumberPlaceholder')}
-              value={formData.vehicleNumber}
-              onChangeText={handleChange('vehicleNumber')}
-              icon="card-outline"
-              maxLength={15}
-              autoCapitalize="characters"
-            />
-            <Input
-              label={t('createVehicle.vehicleColor')}
-              placeholder={t('createVehicle.vehicleColorPlaceholder')}
-              value={formData.vehicleColor}
-              onChangeText={handleChange('vehicleColor')}
-              icon="color-palette-outline"
-            />
+        <View style={styles.formWrap}>
+          <PageHeader
+            icon="car-outline"
+            title={t('createVehicle.title')}
+            subtitle={t('createVehicle.subtitle')}
+          />
 
-            {error ? <StatusBanner type="error" message={error} /> : null}
+          <Card glow="blue" style={styles.formCard}>
+            <View style={styles.formStack}>
+              <ThemedText type="caption" themeColor="textSecondary" style={styles.sectionLabel}>
+                {t('form.ownerDetails').toUpperCase()}
+              </ThemedText>
 
-            <Button fullWidth isLoading={loading} onPress={handleSubmit}>
-              {t('createVehicle.submitRequest')}
-            </Button>
-          </View>
-        </Card>
+              <Input
+                label={t('createVehicle.ownerName')}
+                placeholder={t('createVehicle.ownerPlaceholder')}
+                value={formData.ownerName}
+                onChangeText={handleChange('ownerName')}
+                icon="person-outline"
+              />
+              <Input
+                label={t('createVehicle.email')}
+                placeholder={t('createVehicle.emailPlaceholder')}
+                value={formData.email}
+                onChangeText={handleChange('email')}
+                icon="mail-outline"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              <Input
+                label={t('createVehicle.contactNumber')}
+                placeholder={t('createVehicle.contactPlaceholder')}
+                value={formData.contactNumber}
+                onChangeText={handleChange('contactNumber')}
+                icon="phone-portrait-outline"
+                keyboardType="phone-pad"
+              />
+              <Input
+                label={t('createVehicle.address')}
+                placeholder={t('createVehicle.addressPlaceholder')}
+                value={formData.address}
+                onChangeText={handleChange('address')}
+                icon="location-outline"
+              />
+
+              <View style={[styles.sectionDivider, { backgroundColor: theme.border }]} />
+
+              <ThemedText type="caption" themeColor="textSecondary" style={styles.sectionLabel}>
+                {t('form.vehicleDetails').toUpperCase()}
+              </ThemedText>
+
+              <Input
+                label={t('createVehicle.vehicleName')}
+                placeholder={t('createVehicle.vehicleNamePlaceholder')}
+                value={formData.vehicleName}
+                onChangeText={handleChange('vehicleName')}
+                icon="car-outline"
+              />
+              <Input
+                label={t('createVehicle.vehicleNumber')}
+                placeholder={t('createVehicle.vehicleNumberPlaceholder')}
+                value={formData.vehicleNumber}
+                onChangeText={handleChange('vehicleNumber')}
+                icon="card-outline"
+                maxLength={15}
+                autoCapitalize="characters"
+              />
+              <Input
+                label={t('createVehicle.vehicleColor')}
+                placeholder={t('createVehicle.vehicleColorPlaceholder')}
+                value={formData.vehicleColor}
+                onChangeText={handleChange('vehicleColor')}
+                icon="color-palette-outline"
+              />
+
+              {error ? <StatusBanner type="error" message={error} /> : null}
+
+              <Button fullWidth isLoading={loading} onPress={handleSubmit}>
+                {t('createVehicle.submitRequest')}
+              </Button>
+            </View>
+          </Card>
+        </View>
       )}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    alignItems: 'center',
-    gap: Spacing.two,
-    marginBottom: Spacing.two,
-  },
-  headerSubtitle: {
-    textAlign: 'center',
-  },
   successCard: {
     alignItems: 'center',
     gap: Spacing.three,
+    marginTop: Spacing.four,
   },
-  successPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
+  successIcon: {
+    width: 64,
+    height: 64,
     borderRadius: 999,
-    paddingHorizontal: Spacing.three,
-    paddingVertical: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  successPending: {
-    textAlign: 'center',
+  successHeader: {
+    gap: Spacing.two,
   },
   centerText: {
     textAlign: 'center',
   },
   summaryStack: {
     alignSelf: 'stretch',
-    gap: Spacing.two + 4,
+    gap: Spacing.two,
     marginBottom: Spacing.two,
+  },
+  formWrap: {
+    gap: Spacing.three,
   },
   formCard: {
     padding: Spacing.three,
@@ -297,4 +304,13 @@ const styles = StyleSheet.create({
   formStack: {
     gap: Spacing.three,
   },
+  sectionLabel: {
+    letterSpacing: 0.8,
+    marginBottom: -Spacing.one,
+  },
+  sectionDivider: {
+    height: StyleSheet.hairlineWidth,
+    alignSelf: 'stretch',
+  },
 });
+

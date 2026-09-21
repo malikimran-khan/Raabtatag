@@ -10,8 +10,9 @@ import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { ListGroup, ListRow } from '@/components/ui/ListGroup';
 import { StatusBanner } from '@/components/ui/StatusBanner';
-import { TitleWithAccent } from '@/components/ui/SectionHeading';
 import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
 import { useLanguage } from '@/context/LanguageContext';
@@ -75,12 +76,11 @@ export default function ContactScreen() {
 
   return (
     <Screen showBack withFooter title={t('contact.title')}>
-      <View style={styles.header}>
-        <TitleWithAccent text={t('contact.title')} type="h2" style={styles.left} />
-        <ThemedText type="body" themeColor="textSecondary" style={styles.left}>
-          {t('contact.subtitle')}
-        </ThemedText>
-      </View>
+      <PageHeader
+        icon="mail-outline"
+        title={t('contact.title')}
+        subtitle={t('contact.subtitle')}
+      />
 
       <Card style={styles.formCard}>
         <ThemedText type="h3">{t('contact.formTitle')}</ThemedText>
@@ -126,44 +126,33 @@ export default function ContactScreen() {
         </View>
       </Card>
 
-      <Card style={styles.infoCard}>
-        <View style={[styles.infoIconTile, { backgroundColor: 'rgba(203, 243, 43, 0.2)' }]}>
-          <Ionicons name="mail-outline" size={20} color={theme.highlight} />
-        </View>
-        <ThemedText type="cardTitle">{t('contact.emailUs')}</ThemedText>
-        <ThemedText type="body" themeColor="textSecondary">
-          {t('contact.emailDescription')}
-        </ThemedText>
-        <Pressable onPress={() => open(`mailto:${BRAND.email}`)}>
-          <ThemedText type="smallBold">{BRAND.email}</ThemedText>
-        </Pressable>
-      </Card>
+      <ListGroup label="Reach us">
+        <ListRow
+          icon="mail-outline"
+          label={t('contact.emailUs')}
+          description={t('contact.emailDescription')}
+          value={BRAND.email}
+          onPress={() => open(`mailto:${BRAND.email}`)}
+          showChevron={false}
+        />
+        <ListRow
+          icon="call-outline"
+          label={t('contact.callUs')}
+          description={t('contact.callDescription')}
+          value={BRAND.phoneDisplay}
+          onPress={() => open(`tel:${BRAND.phone}`)}
+          showChevron={false}
+        />
+        <ListRow
+          icon="location-outline"
+          label={t('contact.visitUs')}
+          description={t('contact.visitDescription')}
+          value={BRAND.addressLines.join(', ')}
+          showChevron={false}
+        />
+      </ListGroup>
 
-      <Card style={styles.infoCard}>
-        <View style={[styles.infoIconTile, { backgroundColor: 'rgba(18, 18, 18, 0.06)' }]}>
-          <Ionicons name="location-outline" size={20} color={theme.highlight} />
-        </View>
-        <ThemedText type="cardTitle">{t('contact.visitUs')}</ThemedText>
-        <ThemedText type="body" themeColor="textSecondary">
-          {t('contact.visitDescription')}
-        </ThemedText>
-        <ThemedText type="smallBold">{BRAND.addressLines.join('\n')}</ThemedText>
-      </Card>
-
-      <Card style={styles.infoCard}>
-        <View style={[styles.infoIconTile, { backgroundColor: 'rgba(203, 243, 43, 0.2)' }]}>
-          <Ionicons name="call-outline" size={20} color={theme.highlight} />
-        </View>
-        <ThemedText type="cardTitle">{t('contact.callUs')}</ThemedText>
-        <ThemedText type="body" themeColor="textSecondary">
-          {t('contact.callDescription')}
-        </ThemedText>
-        <Pressable onPress={() => open(`tel:${BRAND.phone}`)}>
-          <ThemedText type="smallBold">{BRAND.phoneDisplay}</ThemedText>
-        </Pressable>
-      </Card>
-
-      <Card style={styles.infoCard}>
+      <Card style={styles.socialCard}>
         <ThemedText type="cardTitle">{t('contact.followUs')}</ThemedText>
         <ThemedText type="body" themeColor="textSecondary">
           {t('contact.followDescription')}
@@ -176,7 +165,7 @@ export default function ContactScreen() {
               accessibilityLabel={label}
               style={({ pressed }) => [
                 styles.socialButton,
-                { backgroundColor: 'rgba(203, 243, 43, 0.2)' },
+                { backgroundColor: theme.accentSoft },
                 pressed && styles.pressed,
               ]}
             >
@@ -190,16 +179,6 @@ export default function ContactScreen() {
 }
 
 const styles = StyleSheet.create({
-  center: {
-    textAlign: 'center',
-  },
-  header: {
-    gap: Spacing.two,
-    marginBottom: Spacing.three,
-  },
-  left: {
-    textAlign: 'left',
-  },
   formCard: {
     gap: Spacing.three,
   },
@@ -211,16 +190,8 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     textAlignVertical: 'top',
   },
-  infoCard: {
+  socialCard: {
     gap: Spacing.one + 2,
-  },
-  infoIconTile: {
-    width: 44,
-    height: 44,
-    borderRadius: Radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.one,
   },
   socialRow: {
     flexDirection: 'row',
@@ -238,3 +209,4 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
 });
+
