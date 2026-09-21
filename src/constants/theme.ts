@@ -1,26 +1,67 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * RAABTA TAG theme — cloned 1:1 from the parking-alert web app
+ * (parking-alert-customer/src/index.css `@theme` tokens).
+ *
+ * The web app ships a light-only design, so `dark` mirrors `light`
+ * to keep the visual identity identical in every color scheme.
  */
 
 import '@/global.css';
 
 import { Platform } from 'react-native';
 
+const palette = {
+  primary: '#FFFFFF',
+  secondary: '#F7F8F2',
+  accent: '#CBF32B',
+  accentHover: '#B7DE19',
+  accentSoft: 'rgba(203, 243, 43, 0.12)',
+  highlight: '#121212',
+  highlightHover: '#2A2A2A',
+  surface: 'rgba(18, 18, 18, 0.04)',
+  surfaceHover: 'rgba(18, 18, 18, 0.07)',
+  border: 'rgba(18, 18, 18, 0.1)',
+  textPrimary: '#121212',
+  textSecondary: '#757575',
+  danger: '#EF4444',
+} as const;
+
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    text: palette.textPrimary,
+    background: palette.primary,
+    backgroundElement: palette.secondary,
+    backgroundSelected: palette.surfaceHover,
+    textSecondary: palette.textSecondary,
+    accent: palette.accent,
+    accentHover: palette.accentHover,
+    accentSoft: palette.accentSoft,
+    highlight: palette.highlight,
+    highlightHover: palette.highlightHover,
+    surface: palette.surface,
+    surfaceHover: palette.surfaceHover,
+    border: palette.border,
+    danger: palette.danger,
+    secondary: palette.secondary,
+    white: palette.primary,
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    text: palette.textPrimary,
+    background: palette.primary,
+    backgroundElement: palette.secondary,
+    backgroundSelected: palette.surfaceHover,
+    textSecondary: palette.textSecondary,
+    accent: palette.accent,
+    accentHover: palette.accentHover,
+    accentSoft: palette.accentSoft,
+    highlight: palette.highlight,
+    highlightHover: palette.highlightHover,
+    surface: palette.surface,
+    surfaceHover: palette.surfaceHover,
+    border: palette.border,
+    danger: palette.danger,
+    secondary: palette.secondary,
+    white: palette.primary,
   },
 } as const;
 
@@ -61,5 +102,18 @@ export const Spacing = {
   six: 64,
 } as const;
 
+/**
+ * Tailwind radius equivalents used across the web app
+ * (rounded-xl, rounded-2xl, rounded-3xl, rounded-[2.5rem]).
+ */
+export const Radius = {
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 24,
+  hero: 40,
+} as const;
+
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
-export const MaxContentWidth = 800;
+export const MaxContentWidth = 760;
+
